@@ -352,7 +352,7 @@ def find_stacking_pdb(pdb_filename):
             
 def find_stacking_xyz(file_name):
     elements, xyz_corr = get_xyz(file_name)
-    number_of_bases = 3 
+    number_of_bases = args.number_of_bases 
     res_list = []
     for i in range(1,number_of_bases + 1):
         res_list.append(f"base_{i}")
@@ -411,6 +411,7 @@ parser = argparse.ArgumentParser(description = "Claculate stacking score between
 # parser.add_argument( "-n", "--name", type=str, metavar = "", required = True, help = "name of uppdated PDB file")
 parser.add_argument( "-p", "--pdb_filename", type=str, metavar = "" ,required = False, help = "name of PDB file")
 parser.add_argument( "-x", "--xyz_filename", type=str, metavar = "", required = False, help = "name of XYZ file")
+parser.add_argument( "-n", "--number_of_bases", type=int, metavar = "", required = False, help = "number of bases to be read from XYZ file")
 args = parser.parse_args()
 
 if args.pdb_filename != None:
