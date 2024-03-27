@@ -1,0 +1,32 @@
+Stacking score calculation between base_1 and base_2
+The parameters for plane equation of first base are: [0.12076390460449854, -10.757994941094163, -1, 231.5310150409629]
+The parameters for plane equation of second base are: [-0.14753942743993498, 3.921251469838994, -1, -65.24350820225602]
+The distance between first plane and centroid of second base is: 3.6261498512262453
+The angle between first and second plane is: 160.33550242729905
+The percentage of shared area between two bases is: 0.2436998331447097
+The final stacking score bewteen base_1 and base_2 is: 0.22243285023482137
+
+Stacking score calculation between base_2 and base_3
+The parameters for plane equation of first base are: [-0.14753942743993498, 3.921251469838994, -1, -65.24350820225602]
+The parameters for plane equation of second base are: [-0.8519850448504792, 4.605622833542846, -1, -82.86001413396806]
+The distance between first plane and centroid of second base is: 3.635453652449238
+The angle between first and second plane is: 8.41084523577962
+The percentage of shared area between two bases is: 0.4683925969168543
+The final stacking score bewteen base_2 and base_3 is: 0.42659560607689195
+
+Stacking score calculation between base_1 and base_2
+The parameters for plane equation of first base are: [0.12076390460449854, -10.757994941094163, -1, 231.5310150409629]
+The parameters for plane equation of second base are: [-0.14753942743993498, 3.921251469838994, -1, -65.24350820225602]
+The distance between first plane and centroid of second base is: 3.6261498512262453
+The angle between first and second plane is: 160.33550242729905
+The percentage of shared area between two bases is: 0.2436998331447097
+The final stacking score bewteen base_1 and base_2 is: 0.22243285023482137
+
+Stacking score calculation between base_2 and base_3
+The parameters for plane equation of first base are: [-0.14753942743993498, 3.921251469838994, -1, -65.24350820225602]
+The parameters for plane equation of second base are: [-0.8519850448504792, 4.605622833542846, -1, -82.86001413396806]
+The distance between first plane and centroid of second base is: 3.635453652449238
+The angle between first and second plane is: 8.41084523577962
+The percentage of shared area between two bases is: 0.4683925969168543
+The final stacking score bewteen base_2 and base_3 is: 0.42659560607689195
+
