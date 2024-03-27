@@ -11,3 +11,14 @@ Firstly, it is necessary to provide file containing the atom numbers of atoms fr
 It is also necessary to provide number of bases that re to be read from the xyz file while calling the script.
 
 $ python planes.py -x xyz _filename_.xyz -n _number_of_bases_
+
+The calculated stacking scores with additional information will be gathered in the raport.txt file. 
+
+The planes.py script can be tested with db_0 files which are avaiable in the example directory. The example usage of planes.py script for these files would be as follows:
+
+$ python planes.py -p db_0.pdb 
+
+or 
+
+$ python planes.py -x db_0.xyz -n 3
+
