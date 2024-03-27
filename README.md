@@ -22,3 +22,10 @@ or
 
 $ python planes.py -x db_0.xyz -n 3
 
+The stacking score for pair of bases is calculated based on algorithm developed within research group led by Rafal Szabla. 
+The work of Taghavi et al. (J. Chem. Theory Comput. 2022, 18, 3637−3653) was inspiration for some elements of the algorithm.
+The stacking score is calculated as a function of three parameters - the distance betwenn the bases, the angle between the planes that describe the bases and the overlap area of the aromatic rings of the bases. 
+These parameters are all transformed into values ranging from 0 to 1. 
+The stacking score is simple multiplication of those parameters. 
+Thus, the stacking score of 1 is corresponding to the perfectly stacked bases, i.e. pair of bases with following features: the distance between the bases is less than 3.5 A, the bases are almost parallel and are compleatly overlaping with each other.
+As the value of stacking score approaches the 1, the pair of bases more resembles the perfectly scaked one.
