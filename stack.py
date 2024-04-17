@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[ ]:
 
 
 import numpy as np 
@@ -190,6 +190,11 @@ def write_xyz(file_name, ele_name, coors):
 # Algorithm for obtaining plane equation that fits best for given base 
 def find_best_fitting_plane(points):
     
+    # Calculate the coordinates of centroid of points from the first base 
+    n = len(points)
+    sum_points = np.sum(points, 0)
+    cent = sum_points/n
+    
     # Formulate the design matrix X and target vector y
     X = np.column_stack((points[:, 0], points[:, 1], np.ones(len(points))))
     print(X)
@@ -204,7 +209,7 @@ def find_best_fitting_plane(points):
     C = -1
 
     # Return the coefficients of the plane equation
-    return A, B, C, D
+    return A, B, C, D, cent
 
 # Algorithm for obtaining equation of a plane that is parallel to the first one and is describing the centroid of second base 
 def find_second_plane(points, A, B, C, D):
@@ -234,6 +239,12 @@ def calculate_angle(A, B, C, A2, B2, C2):
     teta = np.rad2deg(np.arccos(a/(b*c)))
     return(teta)
 
+def middle_plane(A, B, C, A2, B2, C2):
+    a = A + A2
+    b = B + B2
+    c = C + C2
+    return(a, b, c)
+
 def dis2D(dis):
     if dis <= 3.50:
         D = 1
@@ -262,7 +273,7 @@ def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point):
     polygon_2 = shapely.Polygon(base_2)
     
     # Calculating intersection area between two planes 
-    if polygon_1.area >= polygon_2.area:       
+    if polygon_2.area >= polygon_1.area:       
         intersect = shapely.intersection(polygon_1, polygon_2)
         overlap = (polygon_1.intersection(polygon_2).area/polygon_1.area)
         overlap_p = ((polygon_1.intersection(polygon_2).area/polygon_1.area)*100)
@@ -270,6 +281,18 @@ def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point):
         intersect = shapely.intersection(polygon_2, polygon_1)
         overlap = (polygon_2.intersection(polygon_1).area/polygon_2.area)
         overlap_p = ((polygon_2.intersection(polygon_1).area/polygon_2.area)*100)
+
+
+    x,y = polygon_1.exterior.xy
+    u,v = polygon_2.exterior.xy
+    r,t = intersect.exterior.xy    
+    plt.figure()
+    plt.plot(x,y)
+    plt.plot(u,v)
+    plt.plot(r,t)
+    plt.show
+    plt.savefig(f"shapes.pdf")
+
     return(overlap)
 
 # Tool for writting the final raport of the program
@@ -385,7 +408,7 @@ def find_stacking_xyz(file_name):
         print(base_xyz)
         
         # Obtaining plane equation for first base 
-        A, B, C, D = find_best_fitting_plane(base_xyz)
+        A, B, C, D , point_0 = find_best_fitting_plane(base_xyz)
         plane_1 = [A, B, C, D]
         
         # Parsing second base 
@@ -396,22 +419,35 @@ def find_stacking_xyz(file_name):
             e, nxt_base_xyz = get_xyz(nxt_inp)
             
             # Obtaining plane equation that describes the centroid of second base 
-            E, F, G, H, point, dis = find_second_plane(nxt_base_xyz, A, B, C, D)
+            E, F, G, H, point_1, dis = find_second_plane(nxt_base_xyz, A, B, C, D)
             
             # Calculating angle between planes 
-            A2, B2, C2, D2 = find_best_fitting_plane(nxt_base_xyz)
+            A2, B2, C2, D2, cent = find_best_fitting_plane(nxt_base_xyz)
+            E2, F2, G2, H2, point_2, dis = find_second_plane(base_xyz, A2, B2, C2, D2)
             plane_2 = [A2, B2, C2, D2]
             angle = calculate_angle(A, B, C, A2, B2, C2)
 
-            # Calculating overlap between bases 
-            overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point)
+            ## Calculating overlap between bases 
+            #overlap_1 = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point_1)
+            #overlap_2 = calculate_overlap(nxt_base_xyz, base_xyz, A2, B2, C2, D2, E2, F2, G2, H2, point_1)
+            #print(overlap_1, overlap_2)
+            #overlap = (overlap_1 + overlap_2)/2
+           
+            # Test of middle plane 
+            I, J, K = middle_plane(A, B, C, A2, B2, C2)
+            overlap_3 = calculate_overlap(base_xyz, nxt_base_xyz, I, J, K, H, I, J, K, H, point_2)
+            #print(overlap_3)
+            
             
             # Calculating stack score
             r_angle = np.deg2rad(angle)
             rot = np.exp(-1 * r_angle**4) + np.exp(-(r_angle - np.pi)**4) + 0.1 * np.exp(-(r_angle - 0.5*np.pi)**4)
-            D = dis2D(dis)
-            Stack_score = D*rot*overlap
-            write_raport(item, nxt, plane_1, plane_2, dis, angle, overlap, Stack_score, file_name)
+            print(point_1, point_2)            
+            d = point_2 - point_1
+            dd = np.absolute(d[0] + d[1] + d[2])       
+            D = dis2D(dd)
+            Stack_score = D*rot*overlap_3
+            write_raport(item, nxt, plane_1, plane_2, dd, angle, overlap, Stack_score, file_name)
     
 parser = argparse.ArgumentParser(description = "Claculate stacking score between adjacent bases in XYZ or PDB file.")
 # parser.add_argument( "-n", "--name", type=str, metavar = "", required = True, help = "name of uppdated PDB file")
@@ -426,10 +462,4 @@ elif args.xyz_filename != None:
     find_stacking_xyz(args.xyz_filename)
 else:
     print("The file name and type were not specified. Please, use -h option to get help")
-
-
-# In[ ]:
-
-
-
 
