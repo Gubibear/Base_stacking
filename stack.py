@@ -5,6 +5,7 @@
 
 
 import numpy as np 
+import math
 import urllib.request
 import Bio
 from Bio import PDB
@@ -188,18 +189,16 @@ def write_xyz(file_name, ele_name, coors):
             f.write('\t'.join(map(str, exyz[k])) + '\n')        
             
 # Algorithm for obtaining plane equation that fits best for given base 
-def find_best_fitting_plane(points):
+def find_best_fitting_plane_and_centroid(points):
     
-    # Calculate the coordinates of centroid of points from the first base 
+    # Calculate the coordinates of centroid of given points  
     n = len(points)
     sum_points = np.sum(points, 0)
     cent = sum_points/n
     
     # Formulate the design matrix X and target vector y
     X = np.column_stack((points[:, 0], points[:, 1], np.ones(len(points))))
-    print(X)
     y = points[:, 2]
-    print(y)
 
     # Use least squares to find the coefficients vector w
     w, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
@@ -239,11 +238,24 @@ def calculate_angle(A, B, C, A2, B2, C2):
     teta = np.rad2deg(np.arccos(a/(b*c)))
     return(teta)
 
-def middle_plane(A, B, C, A2, B2, C2):
-    a = A + A2
-    b = B + B2
-    c = C + C2
-    return(a, b, c)
+def middle_plane(A, B, C, D, A2, B2, C2, D2):
+    S_a = A + A2
+    S_b = B + B2
+    S_c = C + C2
+    a = S_a/(np.sqrt(S_a**2 + S_b**2 + S_c**2))
+    b = S_b/(np.sqrt(S_a**2 + S_b**2 + S_c**2))
+    c = S_c/(np.sqrt(S_a**2 + S_b**2 + S_c**2))
+    x = np.array([[A, B], [A2, B2]])
+    y = np.array([D, D2])
+    z = np.linalg.solve(x,y)
+    point = (z[0], z[1], 0)
+    d = (a*point[0] + b*point[1] + c*point[2])
+    return(a, b, c, d, point)
+
+def calculate_distance(A, B, C, D, point):
+    dis = (np.absolute(A * point[0] + B * point[1] + C * point[2] + D))/(np.sqrt(A**2 + B**2 + C**2))
+    #dis = np.absolute(A * point[0] + B * point[1] + C * point[2] + D)  
+    return(dis)
 
 def dis2D(dis):
     if dis <= 3.50:
@@ -255,18 +267,18 @@ def dis2D(dis):
     return D
 
 # Alligning coordinates of the two bases in the same plane and gettin their shapes in shapely format
-def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point):
-    c = (E**2 + F**2 + G**2) 
+def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, point, name):
+    c = (A**2 + B**2 + C**2) 
     base_1 = np.empty((len(base_xyz),3))
     base_2 = np.empty((len(nxt_base_xyz),3))
     for i in range(0,len(base_xyz)):
-        t = (E * (point[0]-base_xyz[i][0]) + F * (point[1]-base_xyz[i][1]) + G * (point[2]-base_xyz[i][2]))/(c)
+        t = (A * (point[0]-base_xyz[i][0]) + B * (point[1]-base_xyz[i][1]) + C * (point[2]-base_xyz[i][2]))/(c)
         base_1[i][0] = base_xyz[i][0] + t * A
         base_1[i][1] = base_xyz[i][1] + t * B
         base_1[i][2] = base_xyz[i][2] + t * C
     polygon_1 = shapely.Polygon(base_1)
     for i in range(0,len(nxt_base_xyz)):
-        t = (E * (point[0]-nxt_base_xyz[i][0]) + F * (point[1]-nxt_base_xyz[i][1]) + G * (point[2]-nxt_base_xyz[i][2]))/(c)
+        t = (A * (point[0]-nxt_base_xyz[i][0]) + B * (point[1]-nxt_base_xyz[i][1]) + C * (point[2]-nxt_base_xyz[i][2]))/(c)
         base_2[i][0] = nxt_base_xyz[i][0] + t * A
         base_2[i][1] = nxt_base_xyz[i][1] + t * B
         base_2[i][2] = nxt_base_xyz[i][2] + t * C
@@ -286,12 +298,13 @@ def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point):
     x,y = polygon_1.exterior.xy
     u,v = polygon_2.exterior.xy
     r,t = intersect.exterior.xy    
+    
     plt.figure()
     plt.plot(x,y)
     plt.plot(u,v)
     plt.plot(r,t)
     plt.show
-    plt.savefig(f"shapes.pdf")
+    plt.savefig(f"{name}_overlap_shape.pdf")
 
     return(overlap)
 
@@ -302,7 +315,7 @@ def write_raport(base_1, base_2, plane_1, plane_2, dis, angle, overlap, stack, n
         f.write(f"Stacking score calculation between {base_1} and {base_2}" + '\n')
         f.write(f"The parameters for plane equation of first base are: {plane_1}" + '\n')
         f.write(f"The parameters for plane equation of second base are: {plane_2}" + '\n')
-        f.write(f"The distance between first plane and centroid of second base is: {dis}" + '\n')
+        f.write(f"The average distance between two rings is: {dis}" + '\n')
         f.write(f"The angle between first and second plane is: {angle}" + '\n')
         f.write(f"The percentage of shared area between two bases is: {overlap}" + '\n')
         f.write(f"The final stacking score bewteen {base_1} and {base_2} is: {stack}" + '\n')
@@ -343,15 +356,15 @@ def find_stacking_pdb(pdb_filename):
     # Stacking score calculator 
     # Parsing two adjacent bases in sequence 
     for previous, item, nxt in previous_and_next(res_list):
-        print("Item is now", item, "next is", nxt, "previous is", previous)
+        #print("Item is now", item, "next is", nxt, "previous is", previous)
         
         # Obtaining the XYZ coordinates of first base 
         inp = f"{item}.pdb"
         base_xyz = get_base_xyz(inp)
-        print(base_xyz)
+        #print(base_xyz)
         
-        # Obtaining plane equation for first base 
-        A, B, C, D = find_best_fitting_plane(base_xyz)
+        # Obtaining plane equation of the first base 
+        A, B, C, D, cent_1 = find_best_fitting_plane_and_centroid(base_xyz)
         plane_1 = [A, B, C, D]
         
         # Parsing second base 
@@ -361,24 +374,29 @@ def find_stacking_pdb(pdb_filename):
             nxt_inp = f"{nxt}.pdb"
             nxt_base_xyz = get_base_xyz(nxt_inp)
             
-            # Obtaining plane equation that describes the centroid of second base 
-            E, F, G, H, point, dis = find_second_plane(nxt_base_xyz, A, B, C, D)
+            # Obtaining plane equation of the second base 
+            E, F, G, H, cent_2 = find_best_fitting_plane_and_centroid(nxt_base_xyz)
+            plane_2 = [E, F, G, H]
             
             # Calculating angle between planes 
-            A2, B2, C2, D2 = find_best_fitting_plane(nxt_base_xyz)
-            plane_2 = [A2, B2, C2, D2]
-            angle = calculate_angle(A, B, C, A2, B2, C2)
+            angle = calculate_angle(A, B, C, E, F, G)
             
             # Calculating overlap between bases 
-            overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point)
-            
+            if math.isclose(angle, 0.0, rel_tol=1e-5) == True or math.isclose(angle, 180.0, rel_tol=1e-5) == True:
+                dis = (np.sqrt((D-H)**2))/(np.sqrt(A**2 + B**2 + C**2))
+                overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, cent_1, item)
+            else:
+                I, J, K, L, point = middle_plane(A, B, C, D, E, F, G, H)
+                dis = (calculate_distance(E, F, G, H, cent_1) + calculate_distance(A, B, C, D, cent_2))/2
+                overlap = calculate_overlap(base_xyz, nxt_base_xyz, I, J, K, L, point, item)
+
             # Calculating stack score
             r_angle = np.deg2rad(angle)
             rot = np.exp(-1 * r_angle**4) + np.exp(-(r_angle - np.pi)**4) + 0.1 * np.exp(-(r_angle - 0.5*np.pi)**4)
             D = dis2D(dis)
             Stack_score = D*rot*overlap
             write_raport(item, nxt, plane_1, plane_2, dis, angle, overlap, Stack_score, pdb_filename)
-            
+                
 def find_stacking_xyz(file_name):
     elements, xyz_corr = get_xyz(file_name)
     number_of_bases = args.number_of_bases 
@@ -389,7 +407,6 @@ def find_stacking_xyz(file_name):
         bases_file_name = "bases.txt"
         atoms_in_base = get_rings_from_list(bases_file_name, n)
         el = []
- #       xyz = np.empty((len(atoms_in_base), 3))
         xyz = []
         for j in atoms_in_base:
             el.append(elements[j - 1])
@@ -400,15 +417,15 @@ def find_stacking_xyz(file_name):
         write_xyz(f"base_{i}", el, xyz)
     
     for previous, item, nxt in previous_and_next(res_list):
-        print("Item is now", item, "next is", nxt, "previous is", previous)
+        #print("Item is now", item, "next is", nxt, "previous is", previous)
         
         # Obtaining the XYZ coordinates of first base 
         inp = f"{item}.xyz"
         e, base_xyz = get_xyz(inp)
-        print(base_xyz)
+        #print(base_xyz)
         
         # Obtaining plane equation for first base 
-        A, B, C, D , point_0 = find_best_fitting_plane(base_xyz)
+        A, B, C, D , cent_1 = find_best_fitting_plane_and_centroid(base_xyz)
         plane_1 = [A, B, C, D]
         
         # Parsing second base 
@@ -419,35 +436,27 @@ def find_stacking_xyz(file_name):
             e, nxt_base_xyz = get_xyz(nxt_inp)
             
             # Obtaining plane equation that describes the centroid of second base 
-            E, F, G, H, point_1, dis = find_second_plane(nxt_base_xyz, A, B, C, D)
+            E, F, G, H, cent_2 = find_best_fitting_plane_and_centroid(nxt_base_xyz)
+            plane_2 = [E, F, G, H]
             
             # Calculating angle between planes 
-            A2, B2, C2, D2, cent = find_best_fitting_plane(nxt_base_xyz)
-            E2, F2, G2, H2, point_2, dis = find_second_plane(base_xyz, A2, B2, C2, D2)
-            plane_2 = [A2, B2, C2, D2]
-            angle = calculate_angle(A, B, C, A2, B2, C2)
+            angle = calculate_angle(A, B, C, E, F, G)
 
-            ## Calculating overlap between bases 
-            #overlap_1 = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, E, F, G, H, point_1)
-            #overlap_2 = calculate_overlap(nxt_base_xyz, base_xyz, A2, B2, C2, D2, E2, F2, G2, H2, point_1)
-            #print(overlap_1, overlap_2)
-            #overlap = (overlap_1 + overlap_2)/2
-           
-            # Test of middle plane 
-            I, J, K = middle_plane(A, B, C, A2, B2, C2)
-            overlap_3 = calculate_overlap(base_xyz, nxt_base_xyz, I, J, K, H, I, J, K, H, point_2)
-            #print(overlap_3)
-            
-            
+            # Calculating overlap between bases 
+            if math.isclose(angle, 0.0, rel_tol=1e-5) == True or math.isclose(angle, 180.0, rel_tol=1e-5) == True:
+                dis = (np.absolute(D-H))/(np.sqrt(A**2 + B**2 + C**2))
+                overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, cent_1, item)
+            else:
+                I, J, K, L, point = middle_plane(A, B, C, D, E, F, G, H)
+                dis = (calculate_distance(E, F, G, H, cent_1) + calculate_distance(A, B, C, D, cent_2))/2
+                overlap = calculate_overlap(base_xyz, nxt_base_xyz, I, J, K, L, point, item)
+
             # Calculating stack score
             r_angle = np.deg2rad(angle)
             rot = np.exp(-1 * r_angle**4) + np.exp(-(r_angle - np.pi)**4) + 0.1 * np.exp(-(r_angle - 0.5*np.pi)**4)
-            print(point_1, point_2)            
-            d = point_2 - point_1
-            dd = np.absolute(d[0] + d[1] + d[2])       
-            D = dis2D(dd)
-            Stack_score = D*rot*overlap_3
-            write_raport(item, nxt, plane_1, plane_2, dd, angle, overlap, Stack_score, file_name)
+            D = dis2D(dis)
+            Stack_score = D*rot*overlap
+            write_raport(item, nxt, plane_1, plane_2, dis, angle, overlap, Stack_score, file_name)
     
 parser = argparse.ArgumentParser(description = "Claculate stacking score between adjacent bases in XYZ or PDB file.")
 # parser.add_argument( "-n", "--name", type=str, metavar = "", required = True, help = "name of uppdated PDB file")
