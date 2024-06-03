@@ -293,17 +293,23 @@ def calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, point, name):
         overlap = (polygon_2.intersection(polygon_1).area/polygon_2.area)
         overlap_p = ((polygon_2.intersection(polygon_1).area/polygon_2.area)*100)
 
-
-    x,y = polygon_1.exterior.xy
-    u,v = polygon_2.exterior.xy
-    r,t = intersect.exterior.xy    
+    try:
+        x,y = polygon_1.exterior.xy
+        u,v = polygon_2.exterior.xy
+        r,t = intersect.exterior.xy    
     
-    plt.figure()
-    plt.plot(x,y)
-    plt.plot(u,v)
-    plt.plot(r,t)
-    plt.show
-    plt.savefig(f"{name}_overlap_shape.pdf")
+        plt.figure()
+        plt.plot(x,y)
+        plt.plot(u,v)
+        plt.plot(r,t)
+        plt.fill_between(r,t, alpha=0.3)
+        #plt.fill_between(r,t)
+        plt.xlabel("Contour of the overlap area (green) between two bases (blue and orange)")
+        plt.show
+        plt.savefig(f"{name}_overlap_shape.pdf")
+
+    except:
+        print("An error occured while drawing overlap scheme")
 
     return(overlap)
 
@@ -385,6 +391,7 @@ def find_stacking_pdb(pdb_filename):
             if math.isclose(angle, 0.0, rel_tol=1e-5) == True or math.isclose(angle, 180.0, rel_tol=1e-5) == True:
                 dis = (np.sqrt((D-H)**2))/(np.sqrt(A**2 + B**2 + C**2))
                 overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, cent_1, item)
+                plane_3 = [A, B, C, D]
             else:
                 I, J, K, L, point = middle_plane(A, B, C, D, E, F, G, H, cent_1, cent_2)
                 plane_3 = [I, J, K, L]
@@ -448,6 +455,7 @@ def find_stacking_xyz(file_name):
             if math.isclose(angle, 0.0, rel_tol=1e-5) == True or math.isclose(angle, 180.0, rel_tol=1e-5) == True:
                 dis = (np.absolute(D-H))/(np.sqrt(A**2 + B**2 + C**2))
                 overlap = calculate_overlap(base_xyz, nxt_base_xyz, A, B, C, D, cent_1, item)
+                plane_3 = [A, B, C, D]
             else:
                 I, J, K, L, point = middle_plane(A, B, C, D, E, F, G, H, cent_1, cent_2)
                 plane_3 = [I, J, K, L]
