@@ -1,7 +1,7 @@
 # Base_stacking
 Repository for files and scripts related to the stack scoring algorithm.
 
-The planes.py script has and option to read pdb or xyz files and calculate stacking score between adjacent bases.
+The stack.py script has and option to read pdb or xyz files and calculate stacking score between adjacent bases.
 For the pdb file it is enough to just call the script with -p option followed by the name of the file containing the structure in pdb format.
 
 $ python stack.py -p _filename_.pdb
