@@ -1,0 +1,8 @@
+This file shows how to use the stack_2.0.py script on a prepared example.
+
+To use the code, three files are needed: a file with the code [stack_2.0.py], a file with the geometry in xyz format [geom.xyz] and a file containing the specification of the atoms that make up the aromatic rings [bases-spec].
+To use the code run this command:
+
+$ python3 stack_2.0.py -b bases-spec -x geom.xyz
+
+The program will generate several files during its run. The main results will be stored in the stack.out file. The other files are temporary and can be removed after proper run of the program. The base_n_ring_m.xyz files contain the xyz coordinates for each ring subunit.  
