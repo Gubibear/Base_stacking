@@ -1,7 +1,28 @@
 # Base_stacking
 Repository for files and scripts related to the stack scoring algorithm.
 
-The stack.py script has and option to read pdb or xyz files and calculate stacking score between adjacent bases.
+#########IMPORTANT#########
+##########UPDATE###########
+New version of stacking score algorithm is available since 2025-06-28
+
+The main novelty is an updated definition of perfect overlap of two nucleobase rings. The algorithm is now tuned to give a higher overlap value to structures in which at least two rings (or subunits of purine rings) completely overlap.
+
+The new algorithm is available in the stack_2.0.py script.
+
+This new version does not work with pdb files (for now - we are working on restoring this feature) and requires a different file format that specifies the atoms in aromatic rings.
+For purine rings, the script now requires splitting the ring into two subunits. The order of atoms in the rings is very important for the algorithm's workflow. The last two atoms of each subunit must be the same carbon atoms shared by each purine ring subunit. The atom numbers must also be specified in the same order (i.e. clockwise/counterclockwise) for the two subunits.
+
+An example of this new format is available in the base_spec file in the example_2.0 directory.
+
+To use the new version of the script, use the following command:
+
+$ python3 stack_2.0.py -b bases-spec -x filename.xyz
+
+The user no longer needs to specify the number of bases in the xyz file, but the exact number of lines in the rings specification file must equal the total number of bases.
+##########################
+##########################
+
+The stack.py script has an option to read pdb or xyz files and calculate stacking score between adjacent bases.
 For the pdb file it is enough to just call the script with -p option followed by the name of the file containing the structure in pdb format.
 
 $ python stack.py -p _filename_.pdb
