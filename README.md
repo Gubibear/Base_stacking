@@ -30,15 +30,18 @@ Current version of the code can calculate the stacking score (together with the 
 
 
 XYZ files 
-The code *should* work for all structures with stacked aromatic rings. In case of problems please reach out to the contributor through github issue or directly at: mikolaj.gurba@pwr.edu.pl.
+The code *should* work for all structures with stacked aromatic rings. In case of issues, please contact the author via GitHub or directly at mikolaj.gurba@pwr.edu.pl.
 
-To use the Stack-3.1.py code for calulation of stacking score between rings found in the xyz file 1 additional file must be prepared by the user beforehand. In this txt file the user must specify the atom numbers (corresponding to those in the xyz file) for each atom present in the aromatic rings that are to be inculed in the calculation. The structure of this file and the order of the atom numbers must be provided as requested or the code will crash. Each line of this file corresponds to different aromatic ring in the system and must start with the "ring_n = " phrase, where n is the number of the line (e. g. 1, 2, etc.). Each ring is defined with atom numbers provided in currly brackets. The order of these numbers is very important, as it will define the shape of the ring. The atoms must be provided in order which allows to draw the shape of the ring without any line crossing. For polycyclic rings brackets separated by coma must be provided for each monocyclic subunit. Additionally, for polycyclic rings the full ring must be specified in the last currly bracket. To better explain the structure of this additional file two examples will be detailed.
+To use the Stack-3.1.py code to calculate the stacking coefficient of rings in file xyz, the user must first prepare an additional file. In this txt file, the user must specify the atom numbers (corresponding to the numbers in file xyz) for each atom present in the aromatic rings to be included in the calculation. The structure of this file and the order of the atom numbers must follow the established format; otherwise, the code will crash. Each line in this file corresponds to a different aromatic ring in the system and must begin with the phrase "ring_n = ", where n is the line number (e.g., 1, 2, etc.). Each ring is defined by atom numbers given in curly braces. The order of these numbers is crucial because it defines the ring shape. The atoms must be listed in an order that allows the ring shape to be drawn without intersecting lines. For polycyclic rings, each monocyclic subunit must be listed in a separate set of parentheses, separated by a comma. Additionally, for polycyclic rings, the atoms that make up the complete ring must be listed in the last set of curly braces. The file name is arbitrary as it will be provided when running the code. To better explain the structure of this supplementary file, we will provide two detailed examples - adeninie and 5'-AC-3' DNA dinculeotide.
 
-Aromatic ring specification for adenine:
-<img width="960" height="965" alt="image" src="https://github.com/user-attachments/assets/c33dffc9-8ab2-4274-be75-473a5542f186" />
-For the adenine molecule the line in the txt file specyfing the aromatic ring will be as follows:
-  ring_1 = {1, 2, 3, 4, 5, 6}, {5, 4, 9, 8, 7}, {1, 2, 3, 4, 9, 8, 7, 5, 6}
+Definition of aromatic ring for adenine:
+<img width="192" height="193" alt="image" src="https://github.com/user-attachments/assets/c33dffc9-8ab2-4274-be75-473a5542f186" />
+For an adenine molecule, with the atom numbering shown above, the line in the txt file specifying the aromatic ring would look like this:
+ring_1 = {1, 2, 3, 4, 5, 6}, {5, 4, 9, 8, 7}, {1, 2, 3, 4, 9, 8, 7, 5, 6}
+The first two curly brackets correspond to the pyrimidine and imidazole rings, and the last one defines the entire purine ring. The starting atom in the curly brackets can be chosen arbitrarily, but the numbering order must be the same (or reversed), as this is the only order that allows aromatic rings to be drawn as a continuous line.
 
+Example file containing the definition for the aromatic rings in 5'-AC-3' DNA dinculeotide.
+<img width="192" height="193" alt="image" src="https://github.com/user-attachments/assets/c33dffc9-8ab2-4274-be75-473a5542f186" />
 
 pdb files: this works for all pdb files containing canonical nucleobases 
 xyz files: all molecules will work, but additional file is necessary to specify the order of atoms in aromatic rings. further details in example description.
