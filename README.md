@@ -35,26 +35,26 @@ To use the Stack-3.1.py code to calculate the stacking score of rings in file xy
 
 Definition of aromatic ring for adenine:
 <img width="192" height="193" alt="image" src="https://github.com/user-attachments/assets/c33dffc9-8ab2-4274-be75-473a5542f186" />
-For an adenine molecule, with the atom numbering shown above, the line in the txt file specifying the aromatic ring would look like this:\
-###### ring_1 = {1, 2, 3, 4, 5, 6}, {5, 4, 9, 8, 7}, {1, 2, 3, 4, 9, 8, 7, 5, 6}\
+For an adenine molecule, with the atom numbering shown above, the line in the txt file specifying the aromatic ring would look like this:
+###### ring_1 = {1, 2, 3, 4, 5, 6}, {5, 4, 9, 8, 7}, {1, 2, 3, 4, 9, 8, 7, 5, 6}
 The first two curly brackets correspond to the pyrimidine and imidazole rings, and the last one defines the entire purine ring. The starting atom in the curly brackets can be chosen arbitrarily, but the numbering order must be the same (or reversed), as this is the only order that allows aromatic rings to be drawn as a continuous line.
 
 Example file containing the definition for the aromatic rings in the 5'-AC-3' DNA dinculeotide.
 <img width="479" height="242" alt="dna" src="https://github.com/user-attachments/assets/60d14965-5f0d-44a3-8b98-8fb9f2255431" />
-For dinucleotide AC, the contents of a txt file with aromatic ring definitions might look like this:\
-###### ring_1 = {21 23 24 15 16 20}, {12 14 15 24 11}, {16 20 21 23 24 11 12 14 15}\
-###### ring_2 = {43 44 46 48 52 53}\
+For dinucleotide AC, the contents of a txt file with aromatic ring definitions might look like this:
+###### ring_1 = {21 23 24 15 16 20}, {12 14 15 24 11}, {16 20 21 23 24 11 12 14 15}
+###### ring_2 = {43 44 46 48 52 53}
 The first line gives the atom numbers of the purine ring (divided into pyrimidine and imidazole) of adenine. The second line contains only one bracket, denoting the pyrimidine ring of cytosine.
 
-The code can be executed using the following command:\
-###### python Stack-3.1.py -x *structure_xyz_file_name.xyz* -b *ring_definition_file_name*\
+The code can be executed using the following command:
+###### python Stack-3.1.py -x *structure_xyz_file_name.xyz* -b *ring_definition_file_name*
 The structure xyz filename is specified with the "-x" flag, and the aromatic ring definition filename is specified with the "-b" option. The structure analysis results will be logged to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be logged if the "-l" flag is set to full.
 
 
 ##### PDB files
 
-The current version of the code can read pdb files containing single strands of canonical DNA or RNA nucleotides. No additional files with aromatic ring definitions are required. The code can be run with the following command:\
-###### python Stack-3.1.py -p *structure_pdb_file_name*.pdb\
+The current version of the code can read pdb files containing single strands of canonical DNA or RNA nucleotides. No additional files with aromatic ring definitions are required. The code can be run with the following command:
+###### python Stack-3.1.py -p *structure_pdb_file_name*.pdb
 When run, the code will calculate Stacking Score between each adjacent nucleobase specified in the pdb file with the "-p" flag. The structure analysis results will be saved to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be saved if the "-l" flag is set to full.
 
 Additional exmaples can be found in the dedicated directories.
