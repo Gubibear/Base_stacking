@@ -1,11 +1,11 @@
-Stack-3.1.py is the current version of code developed by Mikołaj Gurba in Rafał Szabla's research group. This code allows for the calculation of the geometric parameters of a system containing stacked aromatic rings and the estimation of the stacking score. The value of the stacking coefficient can be related to the strength of the interaction between these rings, as well as to the properties of the excited states present in such systems.
+Stack-3.1.py is the current version of code developed by Mikołaj Gurba in Rafał Szabla's research group. This code allows for the calculation of the geometric parameters of a system containing stacked aromatic rings and the estimation of the stacking score. The value of the stacking coefficient can be related to the strength of the interaction between these rings, as well as to the properties of the excited states present in such systems.\\
 
-######  Description of the algorithm  ######
+###  Description of the algorithm  
 
 For a given pair of aromatic rings, three main parameters are calculated:
 - the distance between the rings,
 - the angle at which the rings are oriented relative to each other,
-- the area of ​​geometric overlap between these rings.
+- the area of ​​geometric overlap between these rings.\\
 
 A description of these parameters is provided below:
 
@@ -24,11 +24,11 @@ Old Score value is calculated based on the overlap parameter obtained by calcula
 New Score value uses the DARO definition as the overlap parameter.
 Both stacking scores take values ​​from 0 to 1. A value of 1 is obtained for two aromatic rings that are no more than 3.4 angstroms apart, are oriented almost parallel to each other, and completely overlap (or two subunits from different rings completely overlap - this only describes the New Score).
 
-######  How to use the Stack-3.1.py  #######
+###  How to use the Stack-3.1.py 
 
 Current version of the code can calculate the stacking score (together with the distance, angle and overlap area) between two aromatic rings present in the xyz file. Since the driving incentive for the developement of the algorithm and code was studies of stacking between the nucleobases in nucleic acid structures, the code can also read the pdb file which contains single strand of DNA or RNA, but only with canonical bases. The description of the usage of the code for the xyz and pdb files will be provided bellow.
 
-### XYZ files ###
+##### XYZ files 
 The code *should* work for all structures with stacked aromatic rings. In case of issues, please contact the author via GitHub or directly at mikolaj.gurba@pwr.edu.pl.
 
 To use the Stack-3.1.py code to calculate the stacking score of rings in file xyz, the user must first prepare an additional file. In this txt file, the user must specify the atom numbers (corresponding to the numbers in file xyz) for each atom present in the aromatic rings to be included in the calculation. The structure of this file and the order of the atom numbers must follow the established format; otherwise, the code will crash. Each line in this file corresponds to a different aromatic ring in the system and must begin with the phrase "ring_n = ", where n is the line number (e.g., 1, 2, etc.). Stacking Score will be calculated for all subsequent pairs of rings defined in this file (e.g. if 4 lines of ring definitions are given, the code will calculate Stacking Score for 3 pairs of rings: 1st and 2nd, 2nd and 3rd, 3rd and 4th). Each ring is defined by atom numbers given in curly braces. The order of these numbers is crucial because it defines the ring shape. The atoms must be listed in an order that allows the ring shape to be drawn without intersecting lines. For polycyclic rings, each monocyclic subunit must be listed in a separate set of parentheses, separated by a comma. Additionally, for polycyclic rings, the atoms that make up the complete ring must be listed in the last set of curly braces. The file name is arbitrary as it will be provided when running the code. To better explain the structure of this supplementary file, we will provide two detailed examples - adeninie and 5'-AC-3' DNA dinculeotide.
@@ -51,7 +51,7 @@ The code can be executed using the following command:
 The structure xyz filename is specified with the "-x" flag, and the aromatic ring definition filename is specified with the "-b" option. The structure analysis results will be logged to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be logged if the "-l" flag is set to full.
 
 
-### PDB files ###
+##### PDB files
 
 The current version of the code can read pdb files containing single strands of canonical DNA or RNA nucleotides. No additional files with aromatic ring definitions are required. The code can be run with the following command:
   python Stack-3.1.py -p *structure_pdb_file_name*.pdb
