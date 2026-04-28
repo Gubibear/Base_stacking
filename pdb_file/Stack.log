@@ -1,0 +1,9 @@
+Results for structure dna.pdb
+Calculating the stacking parameters between DA2 and DC3
+The distance between the two aromatic rings is: 3.165048891114916
+The distance between the two aromatic ring centroids is: 3.627371697963304
+The angle between the first and the second plane is: 11.238412255586985
+The degree of full ring overlap between DA2 and DC3 is: 0.48146654788776977
+The degree of aromatic ring overlap (DARO) between DA2 and DC3 is: 0.24976184636692442
+The new stacking score for this base pair is: 0.2500950678687976
+

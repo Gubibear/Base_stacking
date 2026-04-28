@@ -1,0 +1,13 @@
+Results for structure dna.xyz
+Calculating the stacking parameters between ring_1 and ring_2
+The parameters of the plane equation for the first ring are: [0.10041898610163677, -0.3570875298404958, -1, 3.061625812071793]
+The parameters of the plane equation for the second ring are: [-0.10921325160395355, -0.3523822231139114, -1, 0.498858506363451]
+The parameters of the mean plane equation are as follows: [-0.004568918228351722, -0.3339692819383327, -0.9425728850904939, 1.5922223420366386]
+The distance between the two aromatic rings is: 3.165048891114916
+The distance between the two aromatic ring centroids is: 3.6273716979633046
+The angle between the first and the second plane is: 11.238412255586919
+The degree of full ring overlap between ring_1 and ring_2 is: 0.48146654788776977
+The degree of aromatic ring overlap (DARO) between ring_1 and ring_2 is: 0.2497618463669243
+The old stacking score for this base pair is: 0.4821088998263167
+The new stacking score for this base pair is: 0.2500950678687975
+
