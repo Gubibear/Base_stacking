@@ -1,5 +1,49 @@
-# Base_stacking
-Repository for files and scripts related to the stack scoring algorithm.
+Stack-3.1.py is the current version of code developed by Mikołaj Gurba in Rafał Szabla's research group. This code allows for the calculation of the geometric parameters of a system containing stacked aromatic rings and the estimation of the stacking score. The value of the stacking coefficient can be related to the strength of the interaction between these rings, as well as to the properties of the excited states present in such systems.
+
+#############  Description of the algorithm  #############
+
+For a given pair of aromatic rings, three main parameters are calculated:
+- the distance between the rings,
+- the angle at which the rings are oriented relative to each other,
+- the area of ​​geometric overlap between these rings.
+
+A description of these parameters is provided below:
+
+1. Distance
+The distance between rings can be defined in various ways. The most common definition in the literature is the distance between the centers of mass or the centroids of the rings. Because this distance does not precisely describe the distance by which the different parts of the stacked rings are separated, a different definition is considered in this code. Each ring is described by a plane fitted to the positions of the heavy atoms present in the aromatic rings using the least-squares method. From these two planes, the mean plane of the two rings is constructed midway between their centroids. The distance between the rings is calculated as the sum of the distances from the center of mass of each ring to the mean plane.
+
+2. Angle
+The angle parameter is straightforward, it is calculated as the angle between the normal vectors of the planes describing the rings. For each ring in the system the equation of the plane describing them is obtained from the leas-squares approach. Only the heavy atoms of the aromatic rings are considered in the fitting.
+
+4. Overlap Area
+The code currently uses two methods to calculate the overlap area. Both project the rings onto a mean plane and calculate their intersection area. The first method calculates the intersection area of ​​the full aromatic ring shapes. To obtain the overlap coefficient, this area is then divided by the area of ​​the smaller of the stacked rings. The second method first divides polycyclic aromatic rings into their smallest subunits (e.g., a purine ring is split into pyrimidine and imidazole) and then calculates the overlap area of ​​all the subunits. The overlap coefficient of each pair of subunits is calculated as the ratio of their intersection area to the area of ​​the smaller subunit. The second method allows to calculate the degree of aromatic ring overlap (DARO), which is defined as the sum of the squared overlap ratios of all subunits divided by the minimum number of subunits in one of the stacked rings.
+
+For each of these three parameters, a score value ranging from 0 to 1 is calculated. Then, as the product of these parameter values, the stacking score for the ring pair is calculated. 
+The code now provides two score values: Old and New. 
+Old Score value is calculated based on the overlap parameter obtained by calculating the overlap of the entire aromatic rings. 
+New Score value uses the DARO definition as the overlap parameter.
+Both stacking scores take values ​​from 0 to 1. A value of 1 is obtained for two aromatic rings that are no more than 3.4 angstroms apart, are oriented almost parallel to each other, and completely overlap (or two subunits from different rings completely overlap - this only describes the New Score).
+
+#############  How to use the Stack-3.1.py  #############
+
+Current version of the code can calculate the stacking score (together with the distance, angle and overlap area) between two aromatic rings present in the xyz file. Since the driving incentive for the developement of the algorithm and code was studies of stacking between the nucleobases in nucleic acid structures, the code can also read the pdb file which contains single strand of DNA or RNA, but only with canonical bases. The description of the usage of the code for the xyz and pdb files will be provided bellow.
+
+
+XYZ files 
+The code *should* work for all structures with stacked aromatic rings. In case of problems please reach out to the contributor through github issue or directly at: mikolaj.gurba@pwr.edu.pl.
+
+To use the Stack-3.1.py code for calulation of stacking score between rings found in the xyz file 1 additional file must be prepared by the user beforehand. In this txt file the user must specify the atom numbers (corresponding to those in the xyz file) for each atom present in the aromatic rings that are to be inculed in the calculation. The structure of this file and the order of the atom numbers must be provided as requested or the code will crash. Each line of this file corresponds to different aromatic ring in the system and must start with the "ring_n = " phrase, where n is the number of the line (e. g. 1, 2, etc.). Each ring is defined with atom numbers provided in currly brackets. The order of these numbers is very important, as it will define the shape of the ring. The atoms must be provided in order which allows to draw the shape of the ring without any line crossing. For polycyclic rings brackets separated by coma must be provided for each monocyclic subunit. Additionally, for polycyclic rings the full ring must be specified in the last currly bracket. To better explain the structure of this additional file two examples will be detailed.
+
+Aromatic ring specification for adenine:
+<img width="960" height="965" alt="image" src="https://github.com/user-attachments/assets/c33dffc9-8ab2-4274-be75-473a5542f186" />
+For the adenine molecule the line in the txt file specyfing the aromatic ring will be as follows:
+  ring_1 = {1, 2, 3, 4, 5, 6}, {5, 4, 9, 8, 7}, {1, 2, 3, 4, 9, 8, 7, 5, 6}
+
+
+pdb files: this works for all pdb files containing canonical nucleobases 
+xyz files: all molecules will work, but additional file is necessary to specify the order of atoms in aromatic rings. further details in example description.
+
+
 
 #########IMPORTANT#########
 ##########UPDATE###########
