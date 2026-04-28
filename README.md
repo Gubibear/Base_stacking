@@ -47,7 +47,7 @@ For dinucleotide AC, the contents of a txt file with aromatic ring definitions m
 The first line gives the atom numbers of the purine ring (divided into pyrimidine and imidazole) of adenine. The second line contains only one bracket, denoting the pyrimidine ring of cytosine.
 
 The code can be executed using the following command:\
-  python Stack-3.1.py -x *structure_xyz_file_name.xyz* -b *ring_definition_file_name*\
+     python Stack-3.1.py -x *structure_xyz_file_name.xyz* -b *ring_definition_file_name*\
 The structure xyz filename is specified with the "-x" flag, and the aromatic ring definition filename is specified with the "-b" option. The structure analysis results will be logged to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be logged if the "-l" flag is set to full.
 
 
@@ -55,5 +55,7 @@ The structure xyz filename is specified with the "-x" flag, and the aromatic rin
 
 The current version of the code can read pdb files containing single strands of canonical DNA or RNA nucleotides. No additional files with aromatic ring definitions are required. The code can be run with the following command:\
   python Stack-3.1.py -p *structure_pdb_file_name*.pdb\
-When run, the code will calculate Stacking Score between each adjacent nucleobase specified in the pdb file with the "-p" flag. The structure analysis results will be saved to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be saved if the "-l" flag is set to full.
+When run, the code will calculate Stacking Score between each adjacent nucleobase specified in the pdb file with the "-p" flag. The structure analysis results will be saved to the "Stack.log" file. Additional analysis parameters (such as the exact plane parameters for each ring) can be saved if the "-l" flag is set to full.\
+
+Additional exmaples can be found in the dedicated directories.
 
