@@ -604,12 +604,13 @@ def calculate_overlap(ring_xyz, nxt_ring_xyz, A, B, C, D, point, name, xyz_file_
 
 #Tool for calculating the value of the D parameter based on the ring-ring distance
 def dis2D(distance):
-    if distance <= 3.371959:
+    if distance <= 3.27:
         D = 1
-    elif distance >= 5.00:
+    elif distance >= 5.50:
         D = 0
     else:
-        D = -3*(0.39109629*(np.exp(-2*1.51146861*(distance-3.37195972))-2*np.exp(-1.51146861*(distance-3.37195972))) + 0.06449501)
+        D = -(1/0.48239945000000006)*(0.52134142*(np.exp(-2*1.44875955*(distance-3.26516572))-2*np.exp(-1.44875955*(distance-3.26516572))) + 0.03894197)
+        #D = -3*(0.39109629*(np.exp(-2*1.51146861*(distance-3.37195972))-2*np.exp(-1.51146861*(distance-3.37195972))) + 0.06449501)
     return D
 
 #Tool for calculating the value of the A parameter based on the ring-ring angle
